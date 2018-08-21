@@ -23,7 +23,7 @@ public class App_User {
 
     @SerializedName("id")
     @Expose
-    int id;
+    String id;
 
     @SerializedName("role")
     @Expose
@@ -49,11 +49,11 @@ public class App_User {
         }
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

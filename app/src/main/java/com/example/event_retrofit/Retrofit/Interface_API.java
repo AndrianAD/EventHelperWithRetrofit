@@ -1,17 +1,14 @@
 package com.example.event_retrofit.Retrofit;
 
 import com.example.event_retrofit.data.App_User;
+import com.example.event_retrofit.data.Event;
 
-import org.json.JSONObject;
-
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface Interface_API {
@@ -28,5 +25,23 @@ public interface Interface_API {
     @FormUrlEncoded
     Call<List<App_User>> Login(@Field("email") String email,
                                @Field("password") String password);
+
+
+    @POST("Create_Event.php")
+    @FormUrlEncoded
+    Call<String> CreateEvent(@Field("name") String name,
+                             @Field("description") String description,
+                             @Field("time") String time,
+                             @Field("id") int user_id);
+
+
+    @POST("Read2.php")
+    @FormUrlEncoded
+    Call<ArrayList<Event>> Read(@Field("id") int user_id);
+
+
+    @POST("Delete_Event(json).php")
+    @FormUrlEncoded
+    Call<String> Delete(@Field("event_id") int user_id);
 
 }
