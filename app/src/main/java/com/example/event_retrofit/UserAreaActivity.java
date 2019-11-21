@@ -4,18 +4,22 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
+
 import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,7 +40,7 @@ public class UserAreaActivity extends AppCompatActivity {
         setContentView(R.layout.user_area_activity);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        Button buttonNewEvent = findViewById(R.id.new_event);
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String lastname = intent.getStringExtra("lastname");
@@ -50,6 +54,14 @@ public class UserAreaActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         read_events();
+
+
+        buttonNewEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                create_event();
+            }
+        });
 
 
     }
@@ -73,10 +85,6 @@ public class UserAreaActivity extends AppCompatActivity {
     }
 
     private void create_event() {
-
-        if (new UtilsKotlin().preventMultiClick()) {
-            return;
-        }
         final Dialog dialog = new Dialog(UserAreaActivity.this);
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
@@ -94,9 +102,14 @@ public class UserAreaActivity extends AppCompatActivity {
                 et_name.requestFocus();
             }
         });
+
+
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (UtilsKotlin.preventMultiClick()){
+                    return;
+                }
                 if (isEmpty(et_name)) {
                     UtilClass.makeToast(UserAreaActivity.this, "Заполните все поля !");
                     return;
@@ -123,9 +136,6 @@ public class UserAreaActivity extends AppCompatActivity {
         });
     }
 
-    public void newEvent(View view) {
-        create_event();
-    }
 
     public void logout(View view) {
         MainActivity.clearPreferances();

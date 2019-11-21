@@ -10,7 +10,7 @@
     android:background="@drawable/gradient"
     android:paddingTop="80dp">
 
-   <android.support.design.widget.TextInputLayout
+   <com.google.android.material.textfield.TextInputLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
        <EditText
@@ -19,9 +19,9 @@
            android:layout_height="wrap_content"
            android:inputType="textPersonName"
            android:hint="Name"/>
-   </android.support.design.widget.TextInputLayout>
+   </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -30,9 +30,9 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:hint="Last Name"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -41,9 +41,9 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:hint="Email"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:passwordToggleContentDescription="true">
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:hint="Password"/>
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 

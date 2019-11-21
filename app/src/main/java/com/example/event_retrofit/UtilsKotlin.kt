@@ -3,13 +3,13 @@ package com.example.event_retrofit
 import android.os.SystemClock
 
 
-class UtilsKotlin {
+object UtilsKotlin {
 
     var mLastClickTime: Long = 0
 
+    @JvmStatic
     fun preventMultiClick(): Boolean {
-
-        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
             return true
         }
         mLastClickTime = SystemClock.elapsedRealtime()
