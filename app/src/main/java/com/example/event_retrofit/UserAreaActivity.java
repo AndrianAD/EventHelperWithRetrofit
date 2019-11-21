@@ -12,13 +12,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
+import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
-
 import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +28,7 @@ public class UserAreaActivity extends AppCompatActivity {
     int user_id;
     Interface_API eventAPI;
     RecyclerView recyclerView;
+    final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(UserAreaActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +47,21 @@ public class UserAreaActivity extends AppCompatActivity {
         welcomeText.setText(name + " " + lastname);
 
         eventAPI = Retrofit.getAPI();
+        recyclerView.setLayoutManager(layoutManager);
+
         read_events();
 
 
     }
 
-
     private void read_events() {
         eventAPI.Read(user_id).enqueue(new Callback<ArrayList<Event>>() {
             @Override
             public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
-                UtilClass.makeToast(UserAreaActivity.this, "ВСЕ ОК");
-                final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(UserAreaActivity.this);
+
                 RecyclerView.Adapter adapter = new RecyclerAdapter(response.body());
                 recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(layoutManager);
+
             }
 
             @Override
@@ -75,6 +73,10 @@ public class UserAreaActivity extends AppCompatActivity {
     }
 
     private void create_event() {
+
+        if (new UtilsKotlin().preventMultiClick()) {
+            return;
+        }
         final Dialog dialog = new Dialog(UserAreaActivity.this);
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
@@ -95,7 +97,7 @@ public class UserAreaActivity extends AppCompatActivity {
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isEmpty(et_name) || isEmpty(description)) {
+                if (isEmpty(et_name)) {
                     UtilClass.makeToast(UserAreaActivity.this, "Заполните все поля !");
                     return;
                 }
