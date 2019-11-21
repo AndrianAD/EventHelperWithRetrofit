@@ -1,14 +1,11 @@
 package com.example.event_retrofit.Retrofit;
-
-import com.google.gson.Gson;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RetrofitSingleton {
+class RetrofitFactory {
     private static  Retrofit retrofit=null;
 
-    public static Retrofit getInstance(String baseURL){
+    static Retrofit getInstance(String baseURL){
         if(retrofit==null){
             retrofit=new Retrofit.Builder()
                     .baseUrl(baseURL)

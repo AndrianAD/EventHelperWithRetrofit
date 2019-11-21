@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.event_retrofit.Retrofit.GoRetrofit;
+import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.data.App_User;
 
@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,15 +68,15 @@ public class MainActivity extends AppCompatActivity {
     private void loginCheck() {
         final String email = etEmail.getText().toString();
         final String password = etPassword.getText().toString();
-        Interface_API loginAPI= GoRetrofit.getAPI();
-        loginAPI.Login(email,password).enqueue(new Callback<List<App_User>>() {
+        Interface_API loginAPI = Retrofit.getAPI();
+        loginAPI.Login(email, password).enqueue(new Callback<List<App_User>>() {
             @Override
             public void onResponse(Call<List<App_User>> call, Response<List<App_User>> response) {
-                if(!response.body().isEmpty()) {
-                    String name=UtilClass.firstUpperCase(response.body().get(0).getName());
-                    String lastname=UtilClass.firstUpperCase(response.body().get(0).getLastName());
+                if (response.body()!=null) {
+                    String name = UtilClass.firstUpperCase(response.body().get(0).getName());
+                    String lastname = UtilClass.firstUpperCase(response.body().get(0).getLastName());
                     String id = response.body().get(0).getId();
-                    UtilClass.makeToast(MainActivity.this, "Welcome " + name +" "+ lastname);
+                    UtilClass.makeToast(MainActivity.this, "Welcome " + name + " " + lastname);
 
                     if (response.body().get(0).getRole().equals("user")) {
                         savePreferances();
@@ -87,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         savePreferances();
                         makeIntent(id, name, lastname, AdminAreaActivity.class);
                     }
-                }
-                else{
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage("Login Failed")
                             .setNegativeButton("Retry", null)
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<App_User>> call, Throwable t) {
-                 UtilClass.makeToast(MainActivity.this, "Ошибка"+t);
+                UtilClass.makeToast(MainActivity.this, "Ошибка" + t);
             }
         });
     }

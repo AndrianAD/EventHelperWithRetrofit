@@ -2,6 +2,7 @@ package com.example.event_retrofit;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.event_retrofit.Retrofit.GoRetrofit;
+import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.data.Event;
 
@@ -36,6 +37,8 @@ public class UserAreaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_area_activity);
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String lastname = intent.getStringExtra("lastname");
@@ -45,7 +48,7 @@ public class UserAreaActivity extends AppCompatActivity {
         welcomeText = findViewById(R.id.tv_welcome);
         welcomeText.setText(name + " " + lastname);
 
-        eventAPI = GoRetrofit.getAPI();
+        eventAPI = Retrofit.getAPI();
         read_events();
 
 

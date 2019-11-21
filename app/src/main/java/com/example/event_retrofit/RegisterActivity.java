@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.event_retrofit.Retrofit.GoRetrofit;
+import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.data.App_User;
 
@@ -49,17 +49,13 @@ public class RegisterActivity extends AppCompatActivity {
                 App_User app_user=new App_User(name,lastName,email,password);
                 registerRequest(app_user);
 
-
-
             }
         });
-
-
 
     }
 
     private void registerRequest(App_User app_user) {
-        Interface_API registerAPI= GoRetrofit.getAPI();
+        Interface_API registerAPI= Retrofit.getAPI();
         registerAPI.Register(app_user.getName(),app_user.getLastName(),app_user.getPassword(),app_user.getEmail()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
