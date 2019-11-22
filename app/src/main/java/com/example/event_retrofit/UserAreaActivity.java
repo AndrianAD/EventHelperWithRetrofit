@@ -11,10 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.event_retrofit.Retrofit.Interface_API;
+import com.example.event_retrofit.Retrofit.ItemTouchHelperAdapter;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
 
@@ -32,7 +34,8 @@ public class UserAreaActivity extends AppCompatActivity {
     int user_id;
     Interface_API eventAPI;
     RecyclerView recyclerView;
-    final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(UserAreaActivity.this);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(UserAreaActivity.this);
+    RecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +52,16 @@ public class UserAreaActivity extends AppCompatActivity {
 
         welcomeText = findViewById(R.id.tv_welcome);
         welcomeText.setText(name + " " + lastname);
-
         eventAPI = Retrofit.getAPI();
+
         recyclerView.setLayoutManager(layoutManager);
-
         read_events();
-
 
         buttonNewEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 create_event();
+
             }
         });
 
@@ -71,9 +73,19 @@ public class UserAreaActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
 
-                RecyclerView.Adapter adapter = new RecyclerAdapter(response.body());
-                recyclerView.setAdapter(adapter);
-
+                if(adapter==null) {
+                    adapter=new RecyclerAdapter();
+                    adapter.setArrayList(response.body());
+                    recyclerView.setAdapter(adapter);
+                    ItemTouchHelper.Callback callback =
+                            new SimpleItemTouchHelperCallback((ItemTouchHelperAdapter) adapter);
+                    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+                    touchHelper.attachToRecyclerView(recyclerView);
+                }
+                else{
+                    adapter.setArrayList(response.body());
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -92,6 +104,7 @@ public class UserAreaActivity extends AppCompatActivity {
         final Button buttonOK = (Button) dialog.findViewById(R.id.save_form_bt_OK);
         final EditText et_name = (EditText) dialog.findViewById(R.id.save_form_et_name);
         final EditText description = (EditText) dialog.findViewById(R.id.save_form_et_description);
+
         et_name.post(new Runnable() {
             @Override
             public void run() {
@@ -107,7 +120,7 @@ public class UserAreaActivity extends AppCompatActivity {
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (UtilsKotlin.preventMultiClick()){
+                if (UtilsKotlin.preventMultiClick()) {
                     return;
                 }
                 if (isEmpty(et_name)) {
@@ -120,7 +133,6 @@ public class UserAreaActivity extends AppCompatActivity {
                 eventAPI.CreateEvent(to_name, to_description, time, user_id).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        UtilClass.makeToast(UserAreaActivity.this, "Сделано");
                         dialog.dismiss();
                         read_events();
                     }
