@@ -1,12 +1,11 @@
 package com.example.event_retrofit;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
+import com.example.event_retrofit.Retrofit.Retrofit;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,7 +14,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class UtilClass {
+class UtilClass {
     static boolean isEmpty(EditText etText) {
         return etText.getText().toString().trim().length() == 0;
     }
@@ -25,8 +24,8 @@ public class UtilClass {
     }
 
 
-    static String firstUpperCase(String word){
-        if(word == null || word.isEmpty()) return "";
+    static String firstUpperCase(String word) {
+        if (word == null || word.isEmpty()) return "";
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
@@ -39,7 +38,6 @@ public class UtilClass {
         eventAPI.Delete(Integer.parseInt(event_id)).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                UtilClass.makeToast(context, "Удалено успешно");
             }
 
             @Override

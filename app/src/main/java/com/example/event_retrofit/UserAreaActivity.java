@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.event_retrofit.Retrofit.Interface_API;
-import com.example.event_retrofit.Retrofit.ItemTouchHelperAdapter;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
 
@@ -27,6 +26,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.event_retrofit.UtilClass.isEmpty;
+
+
+
+interface ItemTouchHelperAdapter {
+
+    boolean onItemMove(int fromPosition, int toPosition);
+
+    void onItemDismiss(int position);
+}
 
 
 public class UserAreaActivity extends AppCompatActivity {
@@ -78,7 +86,7 @@ public class UserAreaActivity extends AppCompatActivity {
                     adapter.setArrayList(response.body());
                     recyclerView.setAdapter(adapter);
                     ItemTouchHelper.Callback callback =
-                            new SimpleItemTouchHelperCallback((ItemTouchHelperAdapter) adapter);
+                            new SimpleItemTouchHelperCallback(adapter);
                     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                     touchHelper.attachToRecyclerView(recyclerView);
                 }
@@ -124,7 +132,7 @@ public class UserAreaActivity extends AppCompatActivity {
                     return;
                 }
                 if (isEmpty(et_name)) {
-                    UtilClass.makeToast(UserAreaActivity.this, "Заполните все поля !");
+                    UtilClass.makeToast(UserAreaActivity.this, "Заполните название!");
                     return;
                 }
                 String to_name = et_name.getText().toString();

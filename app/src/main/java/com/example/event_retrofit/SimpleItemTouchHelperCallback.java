@@ -1,10 +1,8 @@
 package com.example.event_retrofit;
 
-
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.event_retrofit.Retrofit.ItemTouchHelperAdapter;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 

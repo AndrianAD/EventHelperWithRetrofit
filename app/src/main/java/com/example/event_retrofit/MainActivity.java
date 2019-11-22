@@ -4,16 +4,15 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.event_retrofit.Retrofit.Retrofit;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.event_retrofit.Retrofit.Interface_API;
+import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.App_User;
 
 import java.util.List;
@@ -25,8 +24,10 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     static SharedPreferences sharedPreferences;
     static EditText etEmail, etPassword;
-    private static String SHARED_EMAIL;
-    private static String SHARED_PASSWORD;
+    static String SHARED_EMAIL="1";
+    static String SHARED_PASSWORD="2";
+    static String SHARED_ROLE="3";
+    static String SHARED_ID="4";
 
     public static void clearPreferances() {
         sharedPreferences.edit().remove(SHARED_EMAIL).remove(SHARED_PASSWORD).commit();
@@ -37,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        if (sharedPreferences.contains(SHARED_EMAIL)) {
+            loadPreferances();
+            finish();
+        }
+
         setContentView(R.layout.activity_login);
 
         final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterLink);
@@ -44,11 +53,7 @@ public class MainActivity extends AppCompatActivity {
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
 
-        sharedPreferences = getPreferences(MODE_PRIVATE);
-        if (sharedPreferences.contains(SHARED_EMAIL)) {
-            loadPreferances();
-            loginCheck();
-        }
+
 
         tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,18 +78,18 @@ public class MainActivity extends AppCompatActivity {
         loginAPI.Login(email, password).enqueue(new Callback<List<App_User>>() {
             @Override
             public void onResponse(Call<List<App_User>> call, Response<List<App_User>> response) {
-                if (response.body()!=null) {
+                if (response.body() != null) {
                     String name = UtilClass.firstUpperCase(response.body().get(0).getName());
                     String lastname = UtilClass.firstUpperCase(response.body().get(0).getLastName());
                     String id = response.body().get(0).getId();
                     UtilClass.makeToast(MainActivity.this, "Welcome " + name + " " + lastname);
 
                     if (response.body().get(0).getRole().equals("user")) {
-                        savePreferances();
+                        savePreferances("user",id);
                         makeIntent(id, name, lastname, UserAreaActivity.class);
                     }
                     if (response.body().get(0).getRole().equals("admin")) {
-                        savePreferances();
+                        savePreferances("admin",id);
                         makeIntent(id, name, lastname, AdminAreaActivity.class);
                     }
                 } else {
@@ -111,21 +116,29 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void savePreferances() {
+    private void savePreferances(String role, String id) {
         final String email = etEmail.getText().toString();
         final String password = etPassword.getText().toString();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SHARED_EMAIL, email);
+        editor.putString(SHARED_ROLE, role);
         editor.putString(SHARED_PASSWORD, password);
+        editor.putString(SHARED_ID, id);
         editor.commit();
     }
 
     private void loadPreferances() {
-        sharedPreferences = getPreferences(MODE_PRIVATE);
         String email = sharedPreferences.getString(SHARED_EMAIL, "");
         String password = sharedPreferences.getString(SHARED_PASSWORD, "");
-        etEmail.setText(email);
-        etPassword.setText(password);
+        String role = sharedPreferences.getString(SHARED_ROLE, "");
+        String id = sharedPreferences.getString(SHARED_ID, "");
+        if (role.equals("user")) {
+            makeIntent(id, email, password, UserAreaActivity.class);
+        }
+        if (role.equals("admin")) {
+            makeIntent(id, email, password, AdminAreaActivity.class);
+        }
+
     }
 
 

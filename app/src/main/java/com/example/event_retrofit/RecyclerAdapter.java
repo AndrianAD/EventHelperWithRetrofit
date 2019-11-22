@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.event_retrofit.Retrofit.ItemTouchHelperAdapter;
 import com.example.event_retrofit.data.Event;
 
 import java.util.ArrayList;
@@ -21,13 +20,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public ArrayList<Event> arrayList;
     Context context;
 
-
-
     public void setArrayList(ArrayList<Event> arrayList) {
         this.arrayList = arrayList;
     }
-
-
 
 
     @Override
