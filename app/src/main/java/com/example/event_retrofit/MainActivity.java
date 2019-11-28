@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             loadPreferances();
             finish();
         }
-
         setContentView(R.layout.activity_login);
 
         final TextView tvRegisterLink = (TextView) findViewById(R.id.tvRegisterLink);

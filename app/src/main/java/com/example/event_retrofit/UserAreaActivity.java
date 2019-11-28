@@ -1,13 +1,22 @@
 package com.example.event_retrofit;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +29,7 @@ import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,23 +37,16 @@ import retrofit2.Response;
 
 import static com.example.event_retrofit.UtilClass.isEmpty;
 
-
-
-interface ItemTouchHelperAdapter {
-
-    boolean onItemMove(int fromPosition, int toPosition);
-
-    void onItemDismiss(int position);
-}
-
-
 public class UserAreaActivity extends AppCompatActivity {
     TextView welcomeText;
+
     int user_id;
     Interface_API eventAPI;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(UserAreaActivity.this);
     RecyclerAdapter adapter;
+    SpeechRecognizer speechRecognizer;
+    Intent intentSpeechRecognizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,6 @@ public class UserAreaActivity extends AppCompatActivity {
         String lastname = intent.getStringExtra("lastname");
         user_id = Integer.parseInt(intent.getStringExtra("id"));
         recyclerView = findViewById(R.id.recyclerView2);
-
         welcomeText = findViewById(R.id.tv_welcome);
         welcomeText.setText(name + " " + lastname);
         eventAPI = Retrofit.getAPI();
@@ -73,6 +75,11 @@ public class UserAreaActivity extends AppCompatActivity {
             }
         });
 
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        intentSpeechRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intentSpeechRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intentSpeechRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
 
     }
 
@@ -81,16 +88,15 @@ public class UserAreaActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
 
-                if(adapter==null) {
-                    adapter=new RecyclerAdapter();
+                if (adapter == null) {
+                    adapter = new RecyclerAdapter();
                     adapter.setArrayList(response.body());
                     recyclerView.setAdapter(adapter);
                     ItemTouchHelper.Callback callback =
                             new SimpleItemTouchHelperCallback(adapter);
                     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
                     touchHelper.attachToRecyclerView(recyclerView);
-                }
-                else{
+                } else {
                     adapter.setArrayList(response.body());
                     adapter.notifyDataSetChanged();
                 }
@@ -104,6 +110,7 @@ public class UserAreaActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void create_event() {
         final Dialog dialog = new Dialog(UserAreaActivity.this);
         dialog.setContentView(R.layout.save_form);
@@ -112,6 +119,87 @@ public class UserAreaActivity extends AppCompatActivity {
         final Button buttonOK = (Button) dialog.findViewById(R.id.save_form_bt_OK);
         final EditText et_name = (EditText) dialog.findViewById(R.id.save_form_et_name);
         final EditText description = (EditText) dialog.findViewById(R.id.save_form_et_description);
+
+        final ImageView nameGetAudio = dialog.findViewById(R.id.nameGetAudio);
+
+
+        speechRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+
+            }
+
+            @Override
+            public void onRmsChanged(float v) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] bytes) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+
+            }
+
+            @Override
+            public void onError(int i) {
+
+            }
+
+            @Override
+            public void onResults(Bundle bundle) {
+
+                ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (matches != null) {
+                    et_name.setText(matches.get(0));
+                }
+
+            }
+
+            @Override
+            public void onPartialResults(Bundle bundle) {
+
+            }
+
+            @Override
+            public void onEvent(int i, Bundle bundle) {
+
+            }
+        });
+
+
+        nameGetAudio.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+                        et_name.setText("");
+                        et_name.setHint("Listening...");
+                        speechRecognizer.startListening(intentSpeechRecognizer);
+
+//                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) nameGetAudio.getLayoutParams();
+//                        params.width = 40;
+//                        params.height = 40;
+//                        nameGetAudio.setLayoutParams(params);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        et_name.setHint("");
+                        break;
+                }
+                return false;
+            }
+        });
+
 
         et_name.post(new Runnable() {
             @Override
@@ -167,7 +255,17 @@ public class UserAreaActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
 }
+
+
+interface ItemTouchHelperAdapter {
+
+    boolean onItemMove(int fromPosition, int toPosition);
+
+    void onItemDismiss(int position);
+}
+
 
 
 

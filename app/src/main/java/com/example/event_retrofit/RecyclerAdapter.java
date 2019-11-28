@@ -38,15 +38,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.name.setText(event.getName());
         holder.description.setText(event.getDescription());
         holder.time.setText(event.getTime());
-
-        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                deleteItem(event, position);
-
-            }
-        });
     }
 
     private void deleteItem(final Event event, final int position) {
@@ -93,7 +84,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageButton deleteButton;
         private TextView name, description, time;
 
         public ViewHolder(View view) {
@@ -101,7 +91,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             name = view.findViewById(R.id.tv_name);
             description = view.findViewById(R.id.tv_description);
             time = view.findViewById(R.id.tv_time);
-            deleteButton = view.findViewById(R.id.ib_delete);
         }
     }
 
