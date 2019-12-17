@@ -1,32 +1,41 @@
-package com.example.event_retrofit;
+package com.example.event_retrofit.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.event_retrofit.AlarmReceiver;
+import com.example.event_retrofit.R;
+import com.example.event_retrofit.RecyclerAdapter;
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
+import com.example.event_retrofit.UtilClass;
+import com.example.event_retrofit.UtilsKotlin;
 import com.example.event_retrofit.data.Event;
+import com.example.event_retrofit.dragAndDrop.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -35,9 +44,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.example.event_retrofit.UtilClass.isEmpty;
 
 public class UserAreaActivity extends AppCompatActivity {
+    private static final String CHANNEL_ID = "CHANEL_ID";
     TextView welcomeText;
 
     int user_id;
@@ -124,35 +135,7 @@ public class UserAreaActivity extends AppCompatActivity {
 
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle bundle) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-
-            }
-
-            @Override
-            public void onRmsChanged(float v) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] bytes) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int i) {
-
-            }
+            @Override public void onReadyForSpeech(Bundle bundle) { }@Override public void onBeginningOfSpeech() { }@Override public void onRmsChanged(float v) { }@Override public void onBufferReceived(byte[] bytes) { }@Override public void onEndOfSpeech() { }@Override public void onError(int i) { }
 
             @Override
             public void onResults(Bundle bundle) {
@@ -161,7 +144,6 @@ public class UserAreaActivity extends AppCompatActivity {
                 if (matches != null) {
                     et_name.setText(matches.get(0));
                 }
-
             }
 
             @Override
@@ -174,7 +156,6 @@ public class UserAreaActivity extends AppCompatActivity {
 
             }
         });
-
 
         nameGetAudio.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -249,6 +230,56 @@ public class UserAreaActivity extends AppCompatActivity {
         MainActivity.clearPreferances();
         startActivity(new Intent(this, MainActivity.class));
         finish();
+
+
+
+        // NOTIFICATION !!
+
+//        Intent snoozeIntent = new Intent(this, AlarmReceiver.class);
+//        snoozeIntent.setAction("Action");
+//        snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
+//        PendingIntent snoozePendingIntent =
+//                PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
+//
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+//                .setSmallIcon(R.drawable.ok_emoji)
+//                .setLargeIcon(BitmapFactory.decodeResource(
+//                        getApplicationContext().getResources(),
+//                        R.drawable.ok_emoji
+//                ))
+//                .setContentTitle("Title test notify")
+//                .setContentText("Content Text")
+//                .setVibrate( new long[]{1000,2000,500})
+//                .setPriority(5)
+//                .addAction(R.drawable.ok_emoji, "action",
+//                        snoozePendingIntent);
+////                .setStyle(new NotificationCompat.BigTextStyle()
+////                        .bigText("Much longer text that cannot fit one line..."))
+//
+//
+//        createNotificationChannel();
+//        NotificationManager notificationManager = null;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+//            notificationManager = getSystemService(NotificationManager.class);
+//        }
+//        int notificationID = 12324;
+//        notificationManager.notify(notificationID, builder.build());
+
+
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Chanel Name";
+            String description = "Chanel Description";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
@@ -258,13 +289,6 @@ public class UserAreaActivity extends AppCompatActivity {
 
 }
 
-
-interface ItemTouchHelperAdapter {
-
-    boolean onItemMove(int fromPosition, int toPosition);
-
-    void onItemDismiss(int position);
-}
 
 
 

@@ -6,18 +6,15 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.event_retrofit.data.Event;
-
+import com.example.event_retrofit.dragAndDrop.ItemTouchHelperAdapter;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements ItemTouchHelperAdapter {
-    public ArrayList<Event> arrayList;
+    private ArrayList<Event> arrayList;
     Context context;
 
     public void setArrayList(ArrayList<Event> arrayList) {

@@ -1,7 +1,9 @@
-package com.example.event_retrofit;
+package com.example.event_retrofit.activity;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.event_retrofit.R;
 
 public class AdminAreaActivity extends AppCompatActivity {
 

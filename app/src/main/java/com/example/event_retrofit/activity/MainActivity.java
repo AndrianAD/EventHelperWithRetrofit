@@ -1,4 +1,4 @@
-package com.example.event_retrofit;
+package com.example.event_retrofit.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.event_retrofit.R;
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
+import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.data.App_User;
 
 import java.util.List;
@@ -97,8 +99,7 @@ public class MainActivity extends AppCompatActivity {
                             .setNegativeButton("Retry", null)
                             .create()
                             .show();
-                }
-            }
+                } }
 
             @Override
             public void onFailure(Call<List<App_User>> call, Throwable t) {
@@ -136,10 +137,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (role.equals("admin")) {
             makeIntent(id, email, password, AdminAreaActivity.class);
-        }
-
-    }
-
+        } }
 
 }
 

@@ -1,4 +1,4 @@
-package com.example.event_retrofit;
+package com.example.event_retrofit.activity;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,8 +7,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.event_retrofit.R;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.Retrofit.Interface_API;
+import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.data.App_User;
 
 import retrofit2.Call;
