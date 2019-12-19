@@ -1,15 +1,18 @@
 package com.example.event_retrofit.dragAndDrop;
 
+import android.view.View;
+import android.widget.AdapterView;
+
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private ItemTouchHelperAdapter mAdapter;
+    private ItemTouchHelperAdapter adapter;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
-        mAdapter = adapter;
+        this.adapter = adapter;
     }
 
     @Override
@@ -32,13 +35,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        mAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        adapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+        adapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
 }

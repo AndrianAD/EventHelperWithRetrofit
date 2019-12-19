@@ -16,9 +16,9 @@ public interface Interface_API {
     @POST("Register.php")
     @FormUrlEncoded
     Call<String> Register(@Field("name") String name,
-                            @Field("lastname") String lastname,
-                            @Field("password") String password,
-                            @Field("email") String email);
+                          @Field("lastname") String lastname,
+                          @Field("password") String password,
+                          @Field("email") String email);
 
 
     @POST("Login2.php")
@@ -29,19 +29,26 @@ public interface Interface_API {
 
     @POST("Create_Event.php")
     @FormUrlEncoded
-    Call<String> CreateEvent(@Field("name") String name,
+    Call<String> createEvent(@Field("name") String name,
                              @Field("description") String description,
                              @Field("time") String time,
                              @Field("id") int user_id);
 
 
+    @POST("Edit_Event.php")
+    @FormUrlEncoded
+    Call<String> editEvent(@Field("name") String name,
+                           @Field("description") String description,
+                           @Field("id") int user_id);
+
+
     @POST("Read2.php")
     @FormUrlEncoded
-    Call<ArrayList<Event>> Read(@Field("id") int user_id);
+    Call<ArrayList<Event>> read(@Field("id") int user_id);
 
 
     @POST("Delete_Event(json).php")
     @FormUrlEncoded
-    Call<String> Delete(@Field("event_id") int user_id);
+    Call<String> delete(@Field("event_id") int user_id);
 
 }

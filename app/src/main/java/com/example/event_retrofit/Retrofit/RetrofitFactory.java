@@ -1,13 +1,18 @@
 package com.example.event_retrofit.Retrofit;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 class RetrofitFactory {
-    private static  Retrofit retrofit=null;
+    private static Retrofit retrofit = null;
 
-    static Retrofit getInstance(String baseURL){
-        if(retrofit==null){
-            retrofit=new Retrofit.Builder()
+
+    static Retrofit getInstance(String baseURL) {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
                     .baseUrl(baseURL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -15,11 +20,6 @@ class RetrofitFactory {
         return retrofit;
 
     }
-
-
-
-
-
 
 
 }

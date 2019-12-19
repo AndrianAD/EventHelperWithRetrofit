@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -19,15 +17,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.event_retrofit.AlarmReceiver;
 import com.example.event_retrofit.R;
 import com.example.event_retrofit.RecyclerAdapter;
 import com.example.event_retrofit.Retrofit.Interface_API;
@@ -44,10 +41,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.example.event_retrofit.UtilClass.isEmpty;
 
-public class UserAreaActivity extends AppCompatActivity {
+public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapter.AdapterCallback {
     private static final String CHANNEL_ID = "CHANEL_ID";
     TextView welcomeText;
 
@@ -58,11 +54,14 @@ public class UserAreaActivity extends AppCompatActivity {
     RecyclerAdapter adapter;
     SpeechRecognizer speechRecognizer;
     Intent intentSpeechRecognizer;
+    ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_area_activity);
+
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Button buttonNewEvent = findViewById(R.id.new_event);
@@ -72,19 +71,26 @@ public class UserAreaActivity extends AppCompatActivity {
         user_id = Integer.parseInt(intent.getStringExtra("id"));
         recyclerView = findViewById(R.id.recyclerView2);
         welcomeText = findViewById(R.id.tv_welcome);
+        progressBar = findViewById(R.id.progressBar);
+
+        adapter = new RecyclerAdapter();
+        adapter.setArrayList(new ArrayList<>());
+        adapter.setContext(UserAreaActivity.this);
+        ItemTouchHelper.Callback callback =
+                new SimpleItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(adapter);
+        adapter.setAdapterCallback(this);
+
+
         welcomeText.setText(name + " " + lastname);
         eventAPI = Retrofit.getAPI();
 
         recyclerView.setLayoutManager(layoutManager);
         read_events();
 
-        buttonNewEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                create_event();
-
-            }
-        });
+        buttonNewEvent.setOnClickListener(event -> create_event());
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         intentSpeechRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -95,27 +101,19 @@ public class UserAreaActivity extends AppCompatActivity {
     }
 
     private void read_events() {
-        eventAPI.Read(user_id).enqueue(new Callback<ArrayList<Event>>() {
+        eventAPI.read(user_id).enqueue(new Callback<ArrayList<Event>>() {
             @Override
             public void onResponse(Call<ArrayList<Event>> call, Response<ArrayList<Event>> response) {
+                adapter.setArrayList(response.body());
+                adapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
 
-                if (adapter == null) {
-                    adapter = new RecyclerAdapter();
-                    adapter.setArrayList(response.body());
-                    recyclerView.setAdapter(adapter);
-                    ItemTouchHelper.Callback callback =
-                            new SimpleItemTouchHelperCallback(adapter);
-                    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-                    touchHelper.attachToRecyclerView(recyclerView);
-                } else {
-                    adapter.setArrayList(response.body());
-                    adapter.notifyDataSetChanged();
-                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Event>> call, Throwable t) {
                 UtilClass.makeToast(UserAreaActivity.this, "Ошибка" + t);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -135,7 +133,29 @@ public class UserAreaActivity extends AppCompatActivity {
 
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override public void onReadyForSpeech(Bundle bundle) { }@Override public void onBeginningOfSpeech() { }@Override public void onRmsChanged(float v) { }@Override public void onBufferReceived(byte[] bytes) { }@Override public void onEndOfSpeech() { }@Override public void onError(int i) { }
+            @Override
+            public void onReadyForSpeech(Bundle bundle) {
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+            }
+
+            @Override
+            public void onRmsChanged(float v) {
+            }
+
+            @Override
+            public void onBufferReceived(byte[] bytes) {
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+            }
+
+            @Override
+            public void onError(int i) {
+            }
 
             @Override
             public void onResults(Bundle bundle) {
@@ -207,7 +227,7 @@ public class UserAreaActivity extends AppCompatActivity {
                 String to_name = et_name.getText().toString();
                 String to_description = description.getText().toString();
                 String time = UtilClass.getCurrentTime();
-                eventAPI.CreateEvent(to_name, to_description, time, user_id).enqueue(new Callback<String>() {
+                eventAPI.createEvent(to_name, to_description, time, user_id).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         dialog.dismiss();
@@ -230,7 +250,6 @@ public class UserAreaActivity extends AppCompatActivity {
         MainActivity.clearPreferances();
         startActivity(new Intent(this, MainActivity.class));
         finish();
-
 
 
         // NOTIFICATION !!
@@ -287,6 +306,22 @@ public class UserAreaActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+
+    @Override
+    public void readEvents() {
+        progressBar.setVisibility(View.VISIBLE);
+        read_events();
+    }
+
+    @Override
+    public void progressBarON() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void progressBarOFF() {
+        progressBar.setVisibility(View.GONE);
+    }
 }
 
 

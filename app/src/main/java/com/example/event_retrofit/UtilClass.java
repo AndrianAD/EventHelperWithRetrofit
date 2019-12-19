@@ -35,7 +35,7 @@ public class UtilClass {
 
     public static void deleteEvent(final Context context, String event_id) {
         Interface_API eventAPI = Retrofit.getAPI();
-        eventAPI.Delete(Integer.parseInt(event_id)).enqueue(new Callback<String>() {
+        eventAPI.delete(Integer.parseInt(event_id)).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
             }
