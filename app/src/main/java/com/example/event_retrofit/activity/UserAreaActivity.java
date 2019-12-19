@@ -130,7 +130,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         final EditText description = (EditText) dialog.findViewById(R.id.save_form_et_description);
 
         final ImageView nameGetAudio = dialog.findViewById(R.id.nameGetAudio);
-
+        final ProgressBar dialogProgress = dialog.findViewById(R.id.dialogProgress);
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
@@ -158,22 +158,20 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             }
 
             @Override
+            public void onPartialResults(Bundle bundle) {
+            }
+
+            @Override
+            public void onEvent(int i, Bundle bundle) {
+            }
+
+            @Override
             public void onResults(Bundle bundle) {
 
                 ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null) {
                     et_name.setText(matches.get(0));
                 }
-            }
-
-            @Override
-            public void onPartialResults(Bundle bundle) {
-
-            }
-
-            @Override
-            public void onEvent(int i, Bundle bundle) {
-
             }
         });
 
@@ -186,11 +184,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                         et_name.setText("");
                         et_name.setHint("Listening...");
                         speechRecognizer.startListening(intentSpeechRecognizer);
-
-//                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) nameGetAudio.getLayoutParams();
-//                        params.width = 40;
-//                        params.height = 40;
-//                        nameGetAudio.setLayoutParams(params);
                         break;
 
                     case MotionEvent.ACTION_UP:
@@ -224,19 +217,24 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                     UtilClass.makeToast(UserAreaActivity.this, "Заполните название!");
                     return;
                 }
+                dialogProgress.setVisibility(View.VISIBLE);
                 String to_name = et_name.getText().toString();
                 String to_description = description.getText().toString();
                 String time = UtilClass.getCurrentTime();
                 eventAPI.createEvent(to_name, to_description, time, user_id).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        dialogProgress.setVisibility(View.GONE);
                         dialog.dismiss();
                         read_events();
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        dialog.dismiss();
                         UtilClass.makeToast(UserAreaActivity.this, "Ошибка" + t);
+                        dialogProgress.setVisibility(View.GONE);
+
                     }
                 });
 
@@ -311,16 +309,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
     public void readEvents() {
         progressBar.setVisibility(View.VISIBLE);
         read_events();
-    }
-
-    @Override
-    public void progressBarON() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void progressBarOFF() {
-        progressBar.setVisibility(View.GONE);
     }
 }
 

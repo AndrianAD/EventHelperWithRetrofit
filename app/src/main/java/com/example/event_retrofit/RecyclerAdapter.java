@@ -48,8 +48,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     public interface AdapterCallback {
         void readEvents();
-        void progressBarON();
-        void progressBarOFF();
     }
 
 
