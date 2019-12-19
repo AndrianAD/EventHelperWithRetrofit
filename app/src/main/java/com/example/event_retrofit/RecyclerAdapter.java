@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -36,7 +39,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     Context context;
     Interface_API eventAPI = Retrofit.getAPI();
     AdapterCallback adapterCallback;
+    private int position;
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public void setAdapterCallback(AdapterCallback callback) {
         this.adapterCallback = callback;
@@ -49,7 +60,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public interface AdapterCallback {
         void readEvents();
     }
-
 
 
     public void setArrayList(ArrayList<Event> arrayList) {
@@ -70,12 +80,39 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.name.setText(event.getName());
         holder.description.setText(event.getDescription());
         holder.time.setText(event.getTime());
-        holder.cardView.setOnClickListener(v -> edit(event,holder));
+
+        holder.cardView.setOnClickListener(v -> edit(event, holder));
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PopupMenu popup = new PopupMenu(context, holder.cardView, Gravity.RIGHT);
+                popup.inflate(R.menu.context_menu);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.notification:
+
+
+
+
+                                return true;
+                            case R.id.delete:
+                                //handle menu2 click
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+                popup.show();
+                return false;
+            }
+        });
     }
 
 
     private void edit(Event event, ViewHolder holder) {
-
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
@@ -88,10 +125,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         final ImageView audio = dialog.findViewById(R.id.nameGetAudio);
         audio.setVisibility(View.GONE);
 
-
         et_name.setText(event.getName());
         description.setText(event.getDescription());
-
 
 //            et_name.post(new Runnable() {
 //                @Override
@@ -126,6 +161,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                         dialogProgress.setVisibility(View.GONE);
 
                     }
+
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         UtilClass.makeToast(context, "Ошибка" + t);
@@ -135,12 +171,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
                     }
                 });
-
-
             }
         });
     }
-
 
     private void deleteItem(final Event event, final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -197,8 +230,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             time = view.findViewById(R.id.tv_time);
             cardView = view.findViewById(R.id.cardView);
         }
+
     }
-
-
 }
 

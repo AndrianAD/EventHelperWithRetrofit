@@ -11,9 +11,14 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,22 +61,23 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
     Intent intentSpeechRecognizer;
     ProgressBar progressBar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_area_activity);
 
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Button buttonNewEvent = findViewById(R.id.new_event);
+
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String lastname = intent.getStringExtra("lastname");
-        user_id = Integer.parseInt(intent.getStringExtra("id"));
+
+        Button buttonNewEvent = findViewById(R.id.new_event);
         recyclerView = findViewById(R.id.recyclerView2);
         welcomeText = findViewById(R.id.tv_welcome);
         progressBar = findViewById(R.id.progressBar);
+
+        user_id = Integer.parseInt(intent.getStringExtra("id"));
 
         adapter = new RecyclerAdapter();
         adapter.setArrayList(new ArrayList<>());

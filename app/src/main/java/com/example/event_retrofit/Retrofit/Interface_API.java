@@ -21,7 +21,7 @@ public interface Interface_API {
                           @Field("email") String email);
 
 
-    @POST("Login2.php")
+    @POST("Login.php")
     @FormUrlEncoded
     Call<List<App_User>> Login(@Field("email") String email,
                                @Field("password") String password);
@@ -42,7 +42,7 @@ public interface Interface_API {
                            @Field("id") int user_id);
 
 
-    @POST("Read2.php")
+    @POST("Read.php")
     @FormUrlEncoded
     Call<ArrayList<Event>> read(@Field("id") int user_id);
 
