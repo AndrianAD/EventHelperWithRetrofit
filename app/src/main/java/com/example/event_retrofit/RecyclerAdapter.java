@@ -1,9 +1,12 @@
 package com.example.event_retrofit;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,39 +18,30 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.ItemTouchHelperAdapter;
-
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-
+import java.util.Date;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import static android.content.Context.ALARM_SERVICE;
 import static com.example.event_retrofit.UtilClass.isEmpty;
-
+import static com.example.event_retrofit.UtilClass.makeToast;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private ArrayList<Event> arrayList;
-    Context context;
-    Interface_API eventAPI = Retrofit.getAPI();
-    AdapterCallback adapterCallback;
-    private int position;
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
+    private Context context;
+    private Interface_API eventAPI = Retrofit.getAPI();
+    private AdapterCallback adapterCallback;
 
     public void setAdapterCallback(AdapterCallback callback) {
         this.adapterCallback = callback;
@@ -61,11 +55,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         void readEvents();
     }
 
-
     public void setArrayList(ArrayList<Event> arrayList) {
         this.arrayList = arrayList;
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -81,7 +73,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.description.setText(event.getDescription());
         holder.time.setText(event.getTime());
 
-        holder.cardView.setOnClickListener(v -> edit(event, holder));
+        holder.cardView.setOnClickListener(v -> edit(event));
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -93,12 +85,40 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                         switch (item.getItemId()) {
                             case R.id.notification:
 
+                                new SingleDateAndTimePickerDialog.Builder(context)
+                                        .curved()
+                                        .displayListener(new SingleDateAndTimePickerDialog.DisplayListener() {
+                                            @Override
+                                            public void onDisplayed(SingleDateAndTimePicker picker) {
+                                            }
+                                        })
+                                        .minutesStep(1)
+                                        .title("Simple")
+                                        .listener(new SingleDateAndTimePickerDialog.Listener() {
+                                            @Override
+                                            public void onDateSelected(Date date) {
+                                                makeToast(context, date.toString());
 
+                                                Intent intent = new Intent(context, AlarmReceiver.class);
+                                                intent.putExtra("notificationId", 1);
+                                                intent.putExtra("todo", event.getName());
 
+                                                PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0,
+                                                        intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                                AlarmManager alarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                                                Calendar startTime = Calendar.getInstance();
+                                                startTime.set(Calendar.DATE, date.getDate());
+                                                startTime.set(Calendar.HOUR, date.getHours());
+                                                startTime.set(Calendar.MINUTE, date.getMinutes());
+                                                long alarmStartTime = startTime.getTimeInMillis();
+
+                                                alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
+                                            }
+                                        }).display();
 
                                 return true;
                             case R.id.delete:
-                                //handle menu2 click
+                                UtilClass.makeToast(context, "функция не активна");
                                 return true;
                             default:
                                 return false;
@@ -111,8 +131,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         });
     }
 
-
-    private void edit(Event event, ViewHolder holder) {
+    private void edit(Event event) {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
@@ -221,7 +240,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name, description, time;
         private CardView cardView;
-
 
         public ViewHolder(View view) {
             super(view);

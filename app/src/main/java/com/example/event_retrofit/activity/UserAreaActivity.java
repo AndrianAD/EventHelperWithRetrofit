@@ -2,23 +2,15 @@ package com.example.event_retrofit.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -243,8 +235,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
 
                     }
                 });
-
-
             }
         });
     }
@@ -254,62 +244,12 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         MainActivity.clearPreferances();
         startActivity(new Intent(this, MainActivity.class));
         finish();
-
-
-        // NOTIFICATION !!
-
-//        Intent snoozeIntent = new Intent(this, AlarmReceiver.class);
-//        snoozeIntent.setAction("Action");
-//        snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0);
-//        PendingIntent snoozePendingIntent =
-//                PendingIntent.getBroadcast(this, 0, snoozeIntent, 0);
-//
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.drawable.ok_emoji)
-//                .setLargeIcon(BitmapFactory.decodeResource(
-//                        getApplicationContext().getResources(),
-//                        R.drawable.ok_emoji
-//                ))
-//                .setContentTitle("Title test notify")
-//                .setContentText("Content Text")
-//                .setVibrate( new long[]{1000,2000,500})
-//                .setPriority(5)
-//                .addAction(R.drawable.ok_emoji, "action",
-//                        snoozePendingIntent);
-////                .setStyle(new NotificationCompat.BigTextStyle()
-////                        .bigText("Much longer text that cannot fit one line..."))
-//
-//
-//        createNotificationChannel();
-//        NotificationManager notificationManager = null;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//            notificationManager = getSystemService(NotificationManager.class);
-//        }
-//        int notificationID = 12324;
-//        notificationManager.notify(notificationID, builder.build());
-
-
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Chanel Name";
-            String description = "Chanel Description";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
-
 
     @Override
     public void readEvents() {
