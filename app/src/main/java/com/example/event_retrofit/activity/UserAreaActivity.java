@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.event_retrofit.App;
 import com.example.event_retrofit.R;
 import com.example.event_retrofit.RecyclerAdapter;
 import com.example.event_retrofit.Retrofit.Interface_API;
@@ -241,7 +242,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
 
 
     public void logout(View view) {
-        MainActivity.clearPreferances();
+        App.instance.clearPreferances();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
