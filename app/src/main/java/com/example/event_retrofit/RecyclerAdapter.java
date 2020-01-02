@@ -107,7 +107,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                                                         intent, PendingIntent.FLAG_CANCEL_CURRENT);
                                                 AlarmManager alarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                                                 Calendar startTime = Calendar.getInstance();
-                                                startTime.set(Calendar.DATE, date.getDate());
                                                 startTime.set(Calendar.HOUR, date.getHours());
                                                 startTime.set(Calendar.MINUTE, date.getMinutes());
                                                 long alarmStartTime = startTime.getTimeInMillis();

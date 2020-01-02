@@ -15,9 +15,6 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.example.event_retrofit.activity.MainActivity;
-import com.example.event_retrofit.activity.UserAreaActivity;
-
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 
 public class AlarmReceiver extends BroadcastReceiver {
     String CHANNEL_ID = "Chanel EVENT";
