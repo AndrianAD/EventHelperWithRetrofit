@@ -16,12 +16,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.event_retrofit.App;
 import com.example.event_retrofit.R;
 import com.example.event_retrofit.RecyclerAdapter;
@@ -31,14 +29,11 @@ import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.UtilsKotlin;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.SimpleItemTouchHelperCallback;
-
 import java.util.ArrayList;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.example.event_retrofit.UtilClass.isEmpty;
 
 public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapter.AdapterCallback {
@@ -135,35 +130,27 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             @Override
             public void onReadyForSpeech(Bundle bundle) {
             }
-
             @Override
             public void onBeginningOfSpeech() {
             }
-
             @Override
             public void onRmsChanged(float v) {
             }
-
             @Override
             public void onBufferReceived(byte[] bytes) {
             }
-
             @Override
             public void onEndOfSpeech() {
             }
-
             @Override
             public void onError(int i) {
             }
-
             @Override
             public void onPartialResults(Bundle bundle) {
             }
-
             @Override
             public void onEvent(int i, Bundle bundle) {
             }
-
             @Override
             public void onResults(Bundle bundle) {
 
@@ -193,7 +180,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             }
         });
 
-
         et_name.post(new Runnable() {
             @Override
             public void run() {
@@ -204,7 +190,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                 et_name.requestFocus();
             }
         });
-
 
         buttonOK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,7 +224,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             }
         });
     }
-
 
     public void logout(View view) {
         App.instance.clearPreferances();

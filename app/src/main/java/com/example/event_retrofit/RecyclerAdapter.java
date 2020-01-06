@@ -18,21 +18,26 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.ItemTouchHelperAdapter;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import static android.content.Context.ALARM_SERVICE;
 import static com.example.event_retrofit.UtilClass.isEmpty;
 import static com.example.event_retrofit.UtilClass.makeToast;
@@ -101,16 +106,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
                                                 Intent intent = new Intent(context, AlarmReceiver.class);
                                                 intent.putExtra("notificationId", 1);
-                                                intent.putExtra("todo", event.getName());
+                                                intent.putExtra("title", event.getName());
+                                                intent.putExtra("description", event.getDescription());
 
                                                 PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0,
-                                                        intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                                 AlarmManager alarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                                                 Calendar startTime = Calendar.getInstance();
-                                                startTime.set(Calendar.HOUR, date.getHours());
+                                                startTime.set(Calendar.HOUR_OF_DAY, date.getHours());
                                                 startTime.set(Calendar.MINUTE, date.getMinutes());
-                                                long alarmStartTime = startTime.getTimeInMillis();
+                                                startTime.set(Calendar.DATE, date.getDate());
 
+                                                long alarmStartTime = startTime.getTimeInMillis();
                                                 alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
                                             }
                                         }).display();
@@ -236,11 +243,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name, description, time;
         private CardView cardView;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.tv_name);
             description = view.findViewById(R.id.tv_description);

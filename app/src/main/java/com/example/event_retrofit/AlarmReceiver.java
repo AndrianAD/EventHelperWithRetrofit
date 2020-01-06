@@ -1,6 +1,5 @@
 package com.example.event_retrofit;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,9 +7,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
@@ -23,7 +24,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String message = intent.getStringExtra("todo");
+        String title = intent.getStringExtra("title");
+        String description = intent.getStringExtra("description");
+        createNotificationChannel(context);
 
         Intent actionIntent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -35,23 +38,22 @@ public class AlarmReceiver extends BroadcastReceiver {
                         context.getResources(),
                         R.drawable.ok_emoji
                 ))
-                .setContentTitle("Event!")
-                .setContentText(message)
-                .setVibrate(new long[]{500, 500, 500, 500, 500, 500, 500, 500, 500})
+                .setContentTitle(title)
+                .setContentText(description)
                 .setPriority(2)
-                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setLights(Color.WHITE, 3000, 3000)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                 .setSound(alarmSound)
-                .addAction(R.drawable.ok_emoji, "action",
-                        pendingIntent);
-//                .setStyle(new NotificationCompat.BigTextStyle()
-//                        .bigText("Much longer text that cannot fit one line..."))
-
-        createNotificationChannel(context);
+//                .addAction(R.drawable.ok_emoji, "action",
+//                        pendingIntent);
+                .setContentIntent(pendingIntent);
         NotificationManager notificationManager = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             notificationManager = context.getSystemService(NotificationManager.class);
         }
-        int notificationID = 12324;
+        int notificationID = 123;
         notificationManager.notify(notificationID, builder.build());
 
     }
@@ -60,7 +62,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Chanel Name";
             String description = "Chanel Description";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
