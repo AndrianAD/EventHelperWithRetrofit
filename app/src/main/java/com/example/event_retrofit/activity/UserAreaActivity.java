@@ -205,7 +205,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                 String to_name = et_name.getText().toString();
                 String to_description = description.getText().toString();
                 String time = UtilClass.getCurrentTime();
-                eventAPI.createEvent(to_name, to_description, time, user_id).enqueue(new Callback<String>() {
+                eventAPI.createEvent(to_name, to_description, time, 1,user_id).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         dialogProgress.setVisibility(View.GONE);

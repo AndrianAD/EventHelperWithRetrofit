@@ -32,6 +32,7 @@ public interface Interface_API {
     Call<String> createEvent(@Field("name") String name,
                              @Field("description") String description,
                              @Field("time") String time,
+                             @Field("sortOrder") int sortOrder,
                              @Field("id") int user_id);
 
 

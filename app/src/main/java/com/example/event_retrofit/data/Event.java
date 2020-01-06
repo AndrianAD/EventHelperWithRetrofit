@@ -21,12 +21,21 @@ public class Event {
     @Expose
     private String event_id;
 
+    @Expose
+    @SerializedName("sort_order")
+    private int sortOrder;
 
-    public Event(String name, String description, String time, String event_id) {
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public Event(String name, String description, String time,int  sortOrder, String event_id) {
         this.name = name;
         this.description = description;
         this.time = time;
         this.event_id = event_id;
+        this.sortOrder = sortOrder;
     }
 
     public String getEvent_id() {
@@ -62,6 +71,9 @@ public class Event {
     }
 
 
+    public int  getSortOrder() {
+        return sortOrder;
+    }
 }
 
 
