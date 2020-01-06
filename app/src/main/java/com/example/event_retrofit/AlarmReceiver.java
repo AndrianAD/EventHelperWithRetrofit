@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
@@ -42,6 +43,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentText(description)
                 .setPriority(2)
                 .setAutoCancel(true)
+                // vibrate don't work
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setLights(Color.WHITE, 3000, 3000)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
@@ -53,6 +55,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             notificationManager = context.getSystemService(NotificationManager.class);
         }
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (v != null) {
+            v.vibrate(250);
+        }
         int notificationID = 123;
         notificationManager.notify(notificationID, builder.build());
 
@@ -62,7 +68,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Chanel Name";
             String description = "Chanel Description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
