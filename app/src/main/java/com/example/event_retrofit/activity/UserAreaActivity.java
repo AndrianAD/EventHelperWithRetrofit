@@ -3,6 +3,7 @@ package com.example.event_retrofit.activity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -16,10 +17,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.event_retrofit.App;
 import com.example.event_retrofit.R;
 import com.example.event_retrofit.RecyclerAdapter;
@@ -29,11 +32,15 @@ import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.UtilsKotlin;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.SimpleItemTouchHelperCallback;
+
 import java.util.ArrayList;
 import java.util.Locale;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.event_retrofit.ConstantsKt.SORTING_ORDER;
 import static com.example.event_retrofit.UtilClass.isEmpty;
 
 public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapter.AdapterCallback {
@@ -119,6 +126,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
         dialog.show();
+        int sortingOrder = App.instance.getMySharedPreferences().getInt(SORTING_ORDER, 1);
         final Button buttonOK = (Button) dialog.findViewById(R.id.save_form_bt_OK);
         final EditText et_name = (EditText) dialog.findViewById(R.id.save_form_et_name);
         final EditText description = (EditText) dialog.findViewById(R.id.save_form_et_description);
@@ -130,27 +138,35 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             @Override
             public void onReadyForSpeech(Bundle bundle) {
             }
+
             @Override
             public void onBeginningOfSpeech() {
             }
+
             @Override
             public void onRmsChanged(float v) {
             }
+
             @Override
             public void onBufferReceived(byte[] bytes) {
             }
+
             @Override
             public void onEndOfSpeech() {
             }
+
             @Override
             public void onError(int i) {
             }
+
             @Override
             public void onPartialResults(Bundle bundle) {
             }
+
             @Override
             public void onEvent(int i, Bundle bundle) {
             }
+
             @Override
             public void onResults(Bundle bundle) {
 
@@ -205,10 +221,15 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                 String to_name = et_name.getText().toString();
                 String to_description = description.getText().toString();
                 String time = UtilClass.getCurrentTime();
-                eventAPI.createEvent(to_name, to_description, time, 1,user_id).enqueue(new Callback<String>() {
+                eventAPI.createEvent(to_name, to_description, time, sortingOrder, user_id).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         dialogProgress.setVisibility(View.GONE);
+
+                        SharedPreferences.Editor editor = App.instance.getMySharedPreferences().edit();
+                        editor.putInt(SORTING_ORDER, sortingOrder+1);
+                        editor.commit();
+
                         dialog.dismiss();
                         read_events();
                     }

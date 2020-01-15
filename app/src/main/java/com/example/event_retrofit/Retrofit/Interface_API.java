@@ -50,6 +50,13 @@ public interface Interface_API {
 
     @POST("Delete_Event(json).php")
     @FormUrlEncoded
-    Call<String> delete(@Field("event_id") int user_id);
+    Call<String> delete(@Field("event_id") int event_id);
+
+
+    @POST("ChangeOrder.php")
+    @FormUrlEncoded
+    Call<String>changeOrder
+            (@Field("event_id") int event_id,
+             @Field("order") int order);
 
 }

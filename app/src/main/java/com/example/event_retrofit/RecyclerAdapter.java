@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
+import com.example.event_retrofit.activity.RegisterActivity;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.ItemTouchHelperAdapter;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
@@ -231,6 +232,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        int targetOrder;
+        if(fromPosition-toPosition>0){
+            //moveDown
+            targetOrder = arrayList.get(toPosition).getSortOrder()-1;
+        }
+        else{
+            //moveUp
+            targetOrder = arrayList.get(toPosition).getSortOrder()+1;
+        }
+        int id= Integer.parseInt(arrayList.get(fromPosition).getEvent_id());
+        eventAPI.changeOrder(id, targetOrder).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()){
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                UtilClass.makeToast(context, "Ошибка" + t);
+
+            }
+        });
         Collections.swap(arrayList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
@@ -240,7 +263,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onItemDismiss(int position) {
         final Event event = arrayList.get(position);
         deleteItem(event, position);
-
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -254,7 +276,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             time = view.findViewById(R.id.tv_time);
             cardView = view.findViewById(R.id.cardView);
         }
-
     }
 }
 
