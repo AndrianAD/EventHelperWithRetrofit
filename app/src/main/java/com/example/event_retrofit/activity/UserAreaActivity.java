@@ -1,11 +1,15 @@
 package com.example.event_retrofit.activity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -18,7 +22,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +48,8 @@ import retrofit2.Response;
 
 import static com.example.event_retrofit.ConstantsKt.SORTING_ORDER;
 import static com.example.event_retrofit.UtilClass.isEmpty;
+import static com.example.event_retrofit.UtilClass.makeToast;
+import static com.example.event_retrofit.UtilsKotlin.STORAGE_PERMISSION_CODE;
 
 public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapter.AdapterCallback {
     private static final String CHANNEL_ID = "CHANEL_ID";
@@ -72,6 +80,13 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         welcomeText = findViewById(R.id.tv_welcome);
         progressBar = findViewById(R.id.progressBar);
 
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) != PackageManager.PERMISSION_GRANTED){
+           UtilsKotlin.requestPermissions(this,getApplicationContext());
+        }
         user_id = Integer.parseInt(intent.getStringExtra("id"));
 
         adapter = new RecyclerAdapter();
@@ -91,12 +106,12 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         recyclerView.setLayoutManager(layoutManager);
         read_events();
 
-        buttonNewEvent.setOnClickListener(event -> create_event());
-
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         intentSpeechRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intentSpeechRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intentSpeechRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        buttonNewEvent.setOnClickListener(event -> create_event());
 
 
     }
@@ -136,45 +151,53 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
 
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
-            public void onReadyForSpeech(Bundle bundle) {
+            public void onReadyForSpeech(Bundle params) {
+
             }
 
             @Override
             public void onBeginningOfSpeech() {
+
             }
 
             @Override
-            public void onRmsChanged(float v) {
+            public void onRmsChanged(float rmsdB) {
+
             }
 
             @Override
-            public void onBufferReceived(byte[] bytes) {
+            public void onBufferReceived(byte[] buffer) {
+
             }
 
             @Override
             public void onEndOfSpeech() {
+
             }
 
             @Override
-            public void onError(int i) {
+            public void onError(int error) {
+                makeToast(getApplicationContext(), "Error" + error);
             }
 
             @Override
-            public void onPartialResults(Bundle bundle) {
-            }
-
-            @Override
-            public void onEvent(int i, Bundle bundle) {
-            }
-
-            @Override
-            public void onResults(Bundle bundle) {
-
-                ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null) {
                     et_name.setText(matches.get(0));
                 }
             }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+
         });
 
         nameGetAudio.setOnTouchListener(new View.OnTouchListener() {
@@ -190,6 +213,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
 
                     case MotionEvent.ACTION_UP:
                         et_name.setHint("");
+                        speechRecognizer.stopListening();
                         break;
                 }
                 return false;
@@ -227,7 +251,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                         dialogProgress.setVisibility(View.GONE);
 
                         SharedPreferences.Editor editor = App.instance.getMySharedPreferences().edit();
-                        editor.putInt(SORTING_ORDER, sortingOrder+1);
+                        editor.putInt(SORTING_ORDER, sortingOrder + 1);
                         editor.commit();
 
                         dialog.dismiss();
@@ -261,6 +285,25 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
     public void readEvents() {
         progressBar.setVisibility(View.VISIBLE);
         read_events();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, requestCode);
+            }
+
+        }
     }
 }
 
