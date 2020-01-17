@@ -143,6 +143,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
         dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final Button buttonOK = dialog.findViewById(R.id.save_form_bt_OK);
         final EditText et_name = dialog.findViewById(R.id.save_form_et_name);
         final EditText description = dialog.findViewById(R.id.save_form_et_description);

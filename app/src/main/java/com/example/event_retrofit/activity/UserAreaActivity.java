@@ -1,5 +1,4 @@
 package com.example.event_retrofit.activity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -15,20 +14,19 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.event_retrofit.App;
 import com.example.event_retrofit.R;
 import com.example.event_retrofit.RecyclerAdapter;
@@ -38,14 +36,11 @@ import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.UtilsKotlin;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.SimpleItemTouchHelperCallback;
-
 import java.util.ArrayList;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.example.event_retrofit.ConstantsKt.SORTING_ORDER;
 import static com.example.event_retrofit.UtilClass.isEmpty;
 import static com.example.event_retrofit.UtilClass.makeToast;
@@ -54,7 +49,6 @@ import static com.example.event_retrofit.UtilsKotlin.STORAGE_PERMISSION_CODE;
 public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapter.AdapterCallback {
     private static final String CHANNEL_ID = "CHANEL_ID";
     TextView welcomeText;
-
     int user_id;
     Interface_API eventAPI;
     RecyclerView recyclerView;
@@ -141,6 +135,10 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         dialog.setContentView(R.layout.save_form);
         dialog.setTitle("Введите название:");
         dialog.show();
+
+        //set width of dialog MATCH_PARENT
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
         int sortingOrder = App.instance.getMySharedPreferences().getInt(SORTING_ORDER, 1);
         final Button buttonOK = (Button) dialog.findViewById(R.id.save_form_bt_OK);
         final EditText et_name = (EditText) dialog.findViewById(R.id.save_form_et_name);
@@ -153,22 +151,28 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
             @Override
             public void onReadyForSpeech(Bundle params) {
             }
+
             @Override
             public void onBeginningOfSpeech() {
             }
+
             @Override
             public void onRmsChanged(float rmsdB) {
             }
+
             @Override
             public void onBufferReceived(byte[] buffer) {
             }
+
             @Override
             public void onEndOfSpeech() {
             }
+
             @Override
             public void onError(int error) {
                 makeToast(getApplicationContext(), "Error" + error);
             }
+
             @Override
             public void onResults(Bundle results) {
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
@@ -199,7 +203,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                         et_name.setHint("Listening...");
                         speechRecognizer.startListening(intentSpeechRecognizer);
                         break;
-
                     case MotionEvent.ACTION_UP:
                         et_name.setHint("");
                         speechRecognizer.stopListening();
@@ -252,7 +255,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                         dialog.dismiss();
                         UtilClass.makeToast(UserAreaActivity.this, "Ошибка" + t);
                         dialogProgress.setVisibility(View.GONE);
-
                     }
                 });
             }
@@ -276,7 +278,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         read_events();
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -291,7 +292,6 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
                 intent.setData(uri);
                 startActivityForResult(intent, requestCode);
             }
-
         }
     }
 }
