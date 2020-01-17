@@ -27,10 +27,6 @@ class App : Application() {
 
     fun clearPreferances() {
         getMySharedPreferences()?.edit()?.remove(SHARED_EMAIL)?.remove(SHARED_PASSWORD)?.commit()
-//        etPassword.setText("");
-//        etEmail.setText("");
     }
-
-
 }
 

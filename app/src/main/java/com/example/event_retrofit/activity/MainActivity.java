@@ -134,14 +134,6 @@ public class MainActivity extends AppCompatActivity {
             makeIntent(id, email, password, AdminAreaActivity.class);
         }
     }
-
-
-    public void clearPreferances() {
-        //App.instance.getMySharedPreferences().edit().remove(SHARED_EMAIL).remove(SHARED_PASSWORD).commit();
-//        etPassword.setText("");
-//        etEmail.setText("");
-    }
-
 }
 
 
