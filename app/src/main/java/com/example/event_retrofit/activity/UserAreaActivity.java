@@ -36,6 +36,8 @@ import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.UtilsKotlin;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.SimpleItemTouchHelperCallback;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import retrofit2.Call;
@@ -69,7 +71,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
         String name = intent.getStringExtra("name");
         String lastname = intent.getStringExtra("lastname");
 
-        Button buttonNewEvent = findViewById(R.id.new_event);
+        FloatingActionButton buttonNewEvent = findViewById(R.id.addEvent);
         recyclerView = findViewById(R.id.recyclerView2);
         welcomeText = findViewById(R.id.tv_welcome);
         progressBar = findViewById(R.id.progressBar);

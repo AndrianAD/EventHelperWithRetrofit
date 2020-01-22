@@ -1,4 +1,5 @@
 package com.example.event_retrofit.activity;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,19 +59,23 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerRequest(App_User app_user) {
         Interface_API registerAPI= Retrofit.getAPI();
+
+
         registerAPI.Register(app_user.getName(),app_user.getLastName(),app_user.getPassword(),app_user.getEmail()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
              if(response.isSuccessful()){
-                 UtilClass.makeToast(RegisterActivity.this,response.body().toString());
+                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                 startActivity(intent);
              }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
-
+                UtilClass.makeToast(RegisterActivity.this,t.getMessage());
             }
+
+
         });
 
     }

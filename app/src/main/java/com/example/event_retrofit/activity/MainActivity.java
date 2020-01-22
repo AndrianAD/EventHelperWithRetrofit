@@ -74,25 +74,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<App_User>> call, Response<List<App_User>> response) {
                 if (response.body() != null) {
-                    String name = UtilClass.firstUpperCase(response.body().get(0).getName());
-                    String lastname = UtilClass.firstUpperCase(response.body().get(0).getLastName());
-                    String id = response.body().get(0).getId();
-                    UtilClass.makeToast(MainActivity.this, "Welcome " + name + " " + lastname);
+                    if (response.body().size() != 0) {
+                        String name = UtilClass.firstUpperCase(response.body().get(0).getName());
+                        String lastName = UtilClass.firstUpperCase(response.body().get(0).getLastName());
+                        String id = response.body().get(0).getId();
+                        UtilClass.makeToast(MainActivity.this, "Welcome " + name + " " + lastName);
 
-                    if (response.body().get(0).getRole().equals("user")) {
-                        savePreferances("user", id);
-                        makeIntent(id, name, lastname, UserAreaActivity.class);
+                        if (response.body().get(0).getRole().equals("user")) {
+                            savePreferances("user", id);
+                            makeIntent(id, name, lastName, UserAreaActivity.class);
+                        }
+                        if (response.body().get(0).getRole().equals("admin")) {
+                            savePreferances("admin", id);
+                            makeIntent(id, name, lastName, AdminAreaActivity.class);
+                        }
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Login Failed")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
                     }
-                    if (response.body().get(0).getRole().equals("admin")) {
-                        savePreferances("admin", id);
-                        makeIntent(id, name, lastname, AdminAreaActivity.class);
-                    }
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Login Failed")
-                            .setNegativeButton("Retry", null)
-                            .create()
-                            .show();
                 }
             }
 
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void makeIntent(String id, String name, String lastname, Class toClass) {
+     void makeIntent(String id, String name, String lastname, Class toClass) {
         Intent intent = new Intent(MainActivity.this, toClass);
         intent.putExtra("name", name);
         intent.putExtra("lastname", lastname);
