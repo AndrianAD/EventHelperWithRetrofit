@@ -79,7 +79,7 @@ public class UserAreaActivity extends AppCompatActivity implements RecyclerAdapt
 
         if (ContextCompat.checkSelfPermission(
                 this,
-                Manifest.permission.CAMERA
+                Manifest.permission.RECORD_AUDIO
         ) != PackageManager.PERMISSION_GRANTED) {
             UtilsKotlin.requestPermissions(this, getApplicationContext());
         }

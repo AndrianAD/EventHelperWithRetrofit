@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
-import com.example.event_retrofit.activity.RegisterActivity;
 import com.example.event_retrofit.data.Event;
 import com.example.event_retrofit.dragAndDrop.ItemTouchHelperAdapter;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -105,18 +105,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                                             public void onDateSelected(Date date) {
                                                 makeToast(context, date.toString());
 
-                                                Intent intent = new Intent(context, AlarmReceiver.class);
-                                                intent.putExtra("notificationId", 1);
-                                                intent.putExtra("title", event.getName());
-                                                intent.putExtra("description", event.getDescription());
 
-                                                PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0,
-                                                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                                 AlarmManager alarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                                                 Calendar startTime = Calendar.getInstance();
                                                 startTime.set(Calendar.HOUR_OF_DAY, date.getHours());
                                                 startTime.set(Calendar.MINUTE, date.getMinutes());
                                                 startTime.set(Calendar.DATE, date.getDate());
+
+                                                Intent intent = new Intent(context, AlarmReceiver.class);
+                                                intent.putExtra("notificationId", String.valueOf(new Random().nextInt(100)));
+                                                intent.putExtra("title", event.getName());
+                                                intent.putExtra("description", event.getDescription());
+
+                                                PendingIntent alarmIntent = PendingIntent.getBroadcast(context, new Random().nextInt(1000),
+                                                        intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                                                 long alarmStartTime = startTime.getTimeInMillis();
                                                 alarm.set(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmIntent);
@@ -234,21 +236,21 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         int targetOrder;
-        if(fromPosition-toPosition>0){
+        if (fromPosition - toPosition > 0) {
             //moveDown
-            targetOrder = arrayList.get(toPosition).getSortOrder()-1;
-        }
-        else{
+            targetOrder = arrayList.get(toPosition).getSortOrder() - 1;
+        } else {
             //moveUp
-            targetOrder = arrayList.get(toPosition).getSortOrder()+1;
+            targetOrder = arrayList.get(toPosition).getSortOrder() + 1;
         }
-        int id= Integer.parseInt(arrayList.get(fromPosition).getEvent_id());
+        int id = Integer.parseInt(arrayList.get(fromPosition).getEvent_id());
         eventAPI.changeOrder(id, targetOrder).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                 }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 UtilClass.makeToast(context, "Ошибка" + t);

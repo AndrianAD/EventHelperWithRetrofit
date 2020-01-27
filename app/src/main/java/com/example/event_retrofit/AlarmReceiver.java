@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.event_retrofit.activity.MainActivity;
 
+import java.util.Random;
+
 public class AlarmReceiver extends BroadcastReceiver {
     String CHANNEL_ID = "Chanel EVENT";
     Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -27,11 +29,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         String title = intent.getStringExtra("title");
         String description = intent.getStringExtra("description");
-        createNotificationChannel(context);
+        int notificationID = Integer.parseInt(intent.getStringExtra("notificationId"));
+
 
         Intent actionIntent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, actionIntent, 0);
+        int requestCode=new Random().nextInt(1000);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, requestCode, actionIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ok_emoji)
@@ -43,14 +47,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentText(description)
                 .setPriority(2)
                 .setAutoCancel(true)
+                .setFullScreenIntent(pendingIntent, true)
                 // vibrate don't work
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setLights(Color.WHITE, 3000, 3000)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setSound(alarmSound)
+                .setSound(alarmSound);
 //                .addAction(R.drawable.ok_emoji, "action",
 //                        pendingIntent);
-                .setContentIntent(pendingIntent);
+
         NotificationManager notificationManager = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             notificationManager = context.getSystemService(NotificationManager.class);
@@ -59,7 +64,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (v != null) {
             v.vibrate(250);
         }
-        int notificationID = 123;
         notificationManager.notify(notificationID, builder.build());
 
     }

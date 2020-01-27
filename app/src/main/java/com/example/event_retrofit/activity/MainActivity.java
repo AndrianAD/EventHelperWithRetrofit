@@ -17,6 +17,7 @@ import com.example.event_retrofit.Retrofit.Interface_API;
 import com.example.event_retrofit.Retrofit.Retrofit;
 import com.example.event_retrofit.UtilClass;
 import com.example.event_retrofit.data.App_User;
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.List;
 
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         if (App.instance.getMySharedPreferences().contains(SHARED_EMAIL)) {
             loadPreferances();
